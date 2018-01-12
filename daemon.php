@@ -1,24 +1,29 @@
 <?php
+// DEBUG 用，正式上线时删除
 error_reporting(E_ALL);
 /**
  *
  *	SoraMC Server Daemon
  *
+ *	本程序使用 GNU GPL v3 协议开源
+ *
+ *	使用时请遵守协议 ( LICENSE )
+ *
  **/
+ 
+// 引入加密类和工具类，载入配置文件
 include("AES.php");
 include("tools.php");
 include("../config/config.php");
+// 读入配置文件
 $keys = $aesenkey;
 $port = $bindport;
 $host = $bindhost;
 $auth = $contoken;
 $mrys = $httpmrys;
 $hprt = $httpport;
+// Tools 工具类
 $tools = new Tools();
-$opi = array();
-$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-socket_bind($socket, $host, $port);
-socket_listen($socket, 5);
 echo "    _  __                                         ____                  \n";
 echo "   | |/ /__ _ ___ _   _  __ _  __ _ _ __   ___   / ___|  ___  _ __ __ _ \n";
 echo "   | ' // _` / __| | | |/ _` |/ _` | '_ \ / _ \  \___ \ / _ \| '__/ _` |\n";
@@ -26,6 +31,14 @@ echo "   | . \ (_| \__ \ |_| | (_| | (_| | | | | (_) |  ___) | (_) | | | (_| |\n
 echo "   |_|\_\__,_|___/\__,_|\__, |\__,_|_| |_|\___/  |____/ \___/|_|  \__,_|\n";
 echo "                        |___/                                           \n";
 echo "                                                  Minecraft Server Panel\n";
+// 创建 Socket
+$socket = @socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+if(@socket_bind($socket, $host, $port) === false) {
+	$tools->println("**** FAILED TO BIND TO PORT!", false, 2);
+	$tools->println("Perhaps a server is already running on that port?", false, 2);
+	exit;
+}
+@socket_listen($socket, 5);
 $tools->println("SoraMC Version 1.0.0.0");
 $tools->println("Daemon Running on port: " . $port);
 sleep(1);
@@ -43,28 +56,33 @@ $tools->println("Starting log service ...");
 $logthread = new logs("");
 $logthread->start();
 while(true) {
+	// 接受来自客户端的连接
     $connect = socket_accept($socket);
     if($connect !== false){
+		// 读入客户端发送的数据，缓冲区设置成 8192 一般是足够的了
         while($read = @socket_read($connect, 8192)){
+			// 得到客户端信息
 			socket_getpeername($connect, $clientip, $clientport);
+			// 创建 AES 对象
 			$aes = new AES($bit = 256, $key = md5($keys), $iv = md5($keys), $mode = 'cfb');
+			/**
+			 *
+			 *	判断客户端发送过来的内容，如果符合协议编码规范即 Base64，则接受连接
+			 *
+			 **/
 			if(preg_match("/^[A-Za-z0-9\=\/\+]+$/", $read)) {
-				$tools->println("New request from socket: " . $clientip . ":" . $clientport);
-				//$contype = "socket";
-				$decrypt = $aes->decrypt($read);
-				// $tools->println($decrypt);
+				$tools->println("New request from socket: " . $clientip . ":" . $clientport); // DEBUG
+				$decrypt = $aes->decrypt($read); // 解密数据
 				$action = json_decode($decrypt, true);
-				// echo $action[0]->action;
 				if($action["action"] == "login") {
-					// echo "Client: " . $action["key"] . "/" . $keys;
 					if($action["key"] == $keys) {
 						$res = $tools->status(200, $auth);
 						$ret = $aes->encrypt($res);
-						socket_write($connect, $ret, strlen($ret));
+						socket_write($connect, $ret, strlen($ret)); // 认证成功，返回 token
 					} else {
 						$res = $tools->status(403, 'Auth Failed');
 						$ret = $aes->encrypt($res);
-						socket_write($connect, $ret, strlen($ret));
+						socket_write($connect, $ret, strlen($ret)); // 认证失败，返回 Auth Failed
 					}
 				} else {
 					if($action["token"] == $keys) {
@@ -73,15 +91,15 @@ while(true) {
 								if(file_exists("status.dat")) {
 									$res = $tools->status(502, 'Server Is Running');
 									$ret = $aes->encrypt($res);
-									@socket_write($connect, $ret, strlen($ret));
+									@socket_write($connect, $ret, strlen($ret)); // 服务器已经在运行
 									break;
 								} else {
 									@file_put_contents("status.dat", "");
-									$thread = new Minecraft("start");
+									$thread = new Minecraft("start"); //启动 Minecraft 服务端
 									$thread->start();
 									$res = $tools->status(200, 'Successful Start Server');
 									$ret = $aes->encrypt($res);
-									@socket_write($connect, $ret, strlen($ret));
+									@socket_write($connect, $ret, strlen($ret)); // 成功启动服务器
 									break;
 								}
 							case "stop":
@@ -89,12 +107,12 @@ while(true) {
 									@file_put_contents("command.dat", "stop");
 									$res = $tools->status(200, 'Successful Stop Server');
 									$ret = $aes->encrypt($res);
-									@socket_write($connect, $ret, strlen($ret));
+									@socket_write($connect, $ret, strlen($ret)); // 成功关闭服务端
 									break;
 								} else {
 									$res = $tools->status(502, 'Server Is Stopped');
 									$ret = $aes->encrypt($res);
-									@socket_write($connect, $ret, strlen($ret));
+									@socket_write($connect, $ret, strlen($ret)); // 服务器已经停止了
 									break;
 								}
 							case "restart":
@@ -104,70 +122,70 @@ while(true) {
 									$restart->start();
 									$res = $tools->status(200, 'Successful reStart Server');
 									$ret = $aes->encrypt($res);
-									socket_write($connect, $ret, strlen($ret));
+									socket_write($connect, $ret, strlen($ret)); // 成功重启服务端
 									break;
 								} else {
 									$res = $tools->status(502, 'Server Is Stopped');
 									$ret = $aes->encrypt($res);
-									@socket_write($connect, $ret, strlen($ret));
+									@socket_write($connect, $ret, strlen($ret)); // 服务端未运行
 									break;
 								}
 							case "status":
 								if(file_exists("status.dat")) {
 									$res = $tools->status(200, 'Server Online');
 									$ret = $aes->encrypt($res);
-									socket_write($connect, $ret, strlen($ret));
+									socket_write($connect, $ret, strlen($ret)); // 服务器在线
 									break;
 								} else {
 									$res = $tools->status(502, 'Server Offline');
 									$ret = $aes->encrypt($res);
-									@socket_write($connect, $ret, strlen($ret));
+									@socket_write($connect, $ret, strlen($ret)); // 服务器离线
 									break;
 								}
 							case "daemonversion":
 								$res = $tools->status(403, $tools->getSoraMC("version"));
 								$ret = $aes->encrypt($res);
-								socket_write($connect, $ret, strlen($ret));
+								socket_write($connect, $ret, strlen($ret)); // Daemon 版本
 								break;
 							case "daemonencrypt":
 								$res = $tools->status(403, $tools->getSoraMC("encrypt"));
 								$ret = $aes->encrypt($res);
-								socket_write($connect, $ret, strlen($ret));
+								socket_write($connect, $ret, strlen($ret)); // Daemon 加密方式
 								break;
 							case "getserverconfig":
 								$res = $tools->status(403, $tools->getSoraMC("config"));
 								$ret = $aes->encrypt($res);
-								socket_write($connect, $ret, strlen($ret));
+								socket_write($connect, $ret, strlen($ret)); // 获取服务端设置
 								break;
 							case "getsystemconfig":
 								$res = $tools->status(403, $tools->getSystemConfig());
 								$ret = $aes->encrypt($res);
-								socket_write($connect, $ret, strlen($ret));
+								socket_write($connect, $ret, strlen($ret)); // 获取 Daemon 设置
 								break;
 							case "saveconfig":
 								@file_put_contents("./Minecraft/server.properties", base64_decode($action["args"]));
 								$res = $tools->status(403, 'Successful save config');
 								$ret = $aes->encrypt($res);
-								socket_write($connect, $ret, strlen($ret));
+								socket_write($connect, $ret, strlen($ret)); // 保存服务端设置
 								break;
 							case "savesystemconfig":
 								$sconf = json_decode(base64_decode($action["args"]), true);
 								$tools->saveSystemConfig($sconf["corename"], $sconf["jvmmaxmr"], $sconf["javapath"]);
 								$res = $tools->status(403, 'Successful save config');
 								$ret = $aes->encrypt($res);
-								socket_write($connect, $ret, strlen($ret));
+								socket_write($connect, $ret, strlen($ret)); // 保存 Daemon 设置
 								break;
 							case "sendcommand":
 								if(file_exists("status.dat")) {
 									@file_put_contents("command.dat", iconv("UTF-8", "GB2312", base64_decode($action["args"])));
 									$res = $tools->status(200, 'Successful Run Command');
 									$ret = $aes->encrypt($res);
-									@socket_write($connect, $ret, strlen($ret));
+									@socket_write($connect, $ret, strlen($ret)); // 成功发送命令
 									break;
 								} else {
 									$res = $tools->status(502, 'Server Offline');
 									$ret = $aes->encrypt($res);
-									@socket_write($connect, $ret, strlen($ret));
+									@socket_write($connect, $ret, strlen($ret)); // 服务端不在线
 									break;
 								}
 							case "sendmessage":
@@ -176,47 +194,28 @@ while(true) {
 									@file_put_contents("./Minecraft/playerchat.log", "[" . date("H:i:s") . "]<Server> " . iconv("UTF-8", "GB2312", base64_decode($action["args"])) . "\n", FILE_APPEND);
 									$res = $tools->status(200, 'Successful Send Message');
 									$ret = $aes->encrypt($res);
-									socket_write($connect, $ret, strlen($ret));
+									socket_write($connect, $ret, strlen($ret)); // 成功发送消息
 									break;
 								} else {
 									$res = $tools->status(502, 'Server Offline');
 									$ret = $aes->encrypt($res);
-									socket_write($connect, $ret, strlen($ret));
+									socket_write($connect, $ret, strlen($ret)); // 服务端不在线
 									break;
 								}
 							default:
 								$res = $tools->status(404, 'Action Not Found');
 								$ret = $aes->encrypt($res);
-								socket_write($connect, $ret, strlen($ret));
+								socket_write($connect, $ret, strlen($ret)); // 操作不存在
 						}
 					} else {
 						$res = $tools->status(403, 'Token Forbidden');
 						$ret = $aes->encrypt($res);
-						socket_write($connect, $ret, strlen($ret));
+						socket_write($connect, $ret, strlen($ret)); // Token 不正确
 					}
 				}
 			}
         }
-        @socket_close($connect);
-		//$tools->println("Connection Closed: " . $contype . "/" . $connect);
-		/*
-			if(strstr($read, "GET /?pass=" . $auth . " HTTP/")) {
-				$logfile = @mb_substr(file_get_contents("./Minecraft/logs/latest.log"), -16384);
-				$ret = $tools->httpString($logfile, 200, "text/plain", "GB2312");
-				socket_write($connect, $ret, strlen($ret));
-				//$tools->println("New request from http: " . $connect);
-				socket_close($connect);
-				//$contype = "http";
-				continue;
-			} elseif(strstr($read, "GET /favicon.ico HTTP/")) {
-				$ret = $tools->httpString(file_get_contents("favicon.ico"), 200, "image/x-icon");
-				socket_write($connect, $ret, strlen($ret));
-			} else {
-				$ret = $tools->httpString("403 Forbidden", 403);
-				socket_write($connect, $ret, strlen($ret));
-				$tools->println("The client provides an invalid password, your server's IP address may have been leaked.", false, 1);
-			}
-		*/
+        @socket_close($connect); // 结束连接
     }
 }
 
@@ -265,8 +264,6 @@ class Minecraft extends Thread {
 						return;
 					}
 				}
-				//$tools->println("Server Stopped!");
-				
 			}
         }
     }
