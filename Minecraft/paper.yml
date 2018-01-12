@@ -1,0 +1,124 @@
+# This is the main configuration file for Paper.
+# As you can see, there's tons to configure. Some options may impact gameplay, so use
+# with caution, and make sure you know what each option does before configuring.
+# 
+# If you need help with the configuration or have any questions related to Paper,
+# join us in our IRC channel.
+# 
+# IRC: #paper @ irc.spi.gt ( http://irc.spi.gt/iris/?channels=paper )
+# Wiki: https://paper.readthedocs.org/ 
+# Paper Forums: https://aquifermc.org/ 
+
+verbose: false
+config-version: 12
+timings:
+  enabled: true
+  verbose: true
+  server-name-privacy: false
+  hidden-config-entries:
+  - database
+  - settings.bungeecord-addresses
+  history-interval: 300
+  history-length: 3600
+settings:
+  enable-player-collisions: true
+  player-auto-save-rate: -1
+  min-chunk-load-threads: 2
+  bungee-online-mode: true
+  incoming-packet-spam-threshold: 300
+  sleep-between-chunk-saves: false
+  region-file-cache-size: 256
+  remove-invalid-statistics: false
+  save-empty-scoreboard-teams: false
+  load-permissions-yml-before-plugins: true
+messages:
+  kick:
+    flying-player: Flying is not enabled on this server
+    flying-vehicle: Flying is not enabled on this server
+world-settings:
+  default:
+    auto-save-interval: -1
+    keep-spawn-loaded-range: 8
+    game-mechanics:
+      disable-chest-cat-detection: false
+      disable-end-credits: false
+    enable-old-tnt-cannon-behaviors: false
+    use-alternate-fallingblock-onGround-detection: false
+    non-player-arrow-despawn-rate: -1
+    elytra-hit-wall-damage: true
+    disable-explosion-knockback: false
+    grass-spread-tick-rate: 1
+    frosted-ice:
+      enabled: true
+      delay:
+        min: 20
+        max: 40
+    portal-search-radius: 128
+    use-vanilla-world-scoreboard-name-coloring: false
+    optimize-explosions: false
+    queue-light-updates: false
+    delay-chunk-unloads-by: 10s
+    max-auto-save-chunks-per-tick: 24
+    save-queue-limit-for-auto-save: 50
+    squid-spawn-height:
+      minimum: 45.0
+      maximum: 63.0
+    lootables:
+      auto-replenish: false
+      restrict-player-reloot: true
+      reset-seed-on-fill: true
+      max-refills: -1
+      refresh-min: 12h
+      refresh-max: 2d
+    water-over-lava-flow-speed: 5
+    filter-nbt-data-from-spawn-eggs-and-related: true
+    max-entity-collisions: 8
+    allow-non-player-entities-on-scoreboards: false
+    hopper:
+      push-based: false
+    nether-ceiling-void-damage: false
+    spawner-nerfed-mobs-should-jump: false
+    allow-leashing-undead-horse: false
+    baby-zombie-movement-speed: 0.5
+    all-chunks-are-slime-chunks: false
+    mob-spawner-tick-rate: 1
+    container-update-tick-rate: 1
+    keep-spawn-loaded: true
+    skeleton-horse-thunder-spawn-chance: 0.01
+    fire-physics-event-for-redstone: false
+    armor-stands-do-collision-entity-lookups: true
+    disable-ice-and-snow: false
+    disable-teleportation-suffocation-check: false
+    generator-settings:
+      canyon: true
+      caves: true
+      dungeon: true
+      fortress: true
+      mineshaft: true
+      monument: true
+      stronghold: true
+      temple: true
+      village: true
+      flat-bedrock: false
+    enable-treasure-maps: true
+    treasure-maps-return-already-discovered: false
+    despawn-ranges:
+      soft: 32
+      hard: 128
+    fast-drain:
+      lava: false
+      water: false
+    max-growth-height:
+      cactus: 3
+      reeds: 3
+    fishing-time-range:
+      MinimumTicks: 100
+      MaximumTicks: 600
+    remove-corrupt-tile-entities: false
+    falling-block-height-nerf: 0
+    tnt-entity-height-nerf: 0
+    lava-flow-speed:
+      normal: 30
+      nether: 10
+    use-chunk-inhabited-timer: true
+    disable-thunder: false
