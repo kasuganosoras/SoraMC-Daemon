@@ -55,6 +55,15 @@ usleep(500);
 $tools->println("Starting log service ...");
 $logthread = new logs("");
 $logthread->start();
+// 创建 Minecraft 服务端文件夹
+if(!file_exists("./Minecraft/")) {
+	$tools->println("Minecraft server folder not found, try to create it ...");
+	if(@mkdir("./Minecraft/", 0777)) {
+		$tools->println("Successful create Minecraft server folder");
+	} else {
+		$tools->println("Failed to create Minecraft server folder, Perhaps you don't have enough Permission(s)");
+	}
+}
 while(true) {
 	// 接受来自客户端的连接
     $connect = socket_accept($socket);
