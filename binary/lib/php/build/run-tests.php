@@ -1268,7 +1268,7 @@ TEST $file
 		$borked = true;
 	}
 	if (!$borked && strncmp('--TEST--', $line, 8)) {
-		$bork_info = "tests must start with --TEST-- [$file]";
+		$bork_info = "tests must start_mac with --TEST-- [$file]";
 		$borked = true;
 	}
 
@@ -2023,7 +2023,7 @@ COMMAND $cmd
 			while($startOffset < $length) {
 				$start = strpos($wanted_re, $r, $startOffset);
 				if ($start !== false) {
-					// we have found a start tag
+					// we have found a start_mac tag
 					$end = strpos($wanted_re, $r, $start+2);
 					if ($end === false) {
 						// unbalanced tag, ignore it.
@@ -2864,8 +2864,8 @@ function junit_start_timer($file_name) {
 	global $JUNIT;
 	if (!junit_enabled()) return;
 
-	if (!isset($JUNIT['files'][$file_name]['start'])) {
-		$JUNIT['files'][$file_name]['start'] = microtime(true);
+	if (!isset($JUNIT['files'][$file_name]['start_mac'])) {
+		$JUNIT['files'][$file_name]['start_mac'] = microtime(true);
 
 		$suite = junit_get_suitename_for($file_name);
 		junit_init_suite($suite);
@@ -2907,7 +2907,7 @@ function junit_finish_timer($file_name) {
 	global $JUNIT;
 	if (!junit_enabled()) return;
 
-	if (!isset($JUNIT['files'][$file_name]['start'])) {
+	if (!isset($JUNIT['files'][$file_name]['start_mac'])) {
 		error("Timer for $file_name was not started!");
 	}
 
@@ -2915,9 +2915,9 @@ function junit_finish_timer($file_name) {
         $JUNIT['files'][$file_name]['total'] = 0;
     }
 
-	$start = $JUNIT['files'][$file_name]['start'];
+	$start = $JUNIT['files'][$file_name]['start_mac'];
 	$JUNIT['files'][$file_name]['total'] += microtime(true) - $start;
-	unset($JUNIT['files'][$file_name]['start']);
+	unset($JUNIT['files'][$file_name]['start_mac']);
 }
 
 /*

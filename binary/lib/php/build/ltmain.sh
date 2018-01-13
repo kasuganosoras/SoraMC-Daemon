@@ -264,7 +264,7 @@ func_infer_tag ()
       # Blanks in the command may have been stripped by the calling shell,
       # but not from the CC environment variable when configure was run.
       " $CC "* | "$CC "* | " `$echo $CC` "* | "`$echo $CC` "* | " $CC_quoted"* | "$CC_quoted "* | " `$echo $CC_quoted` "* | "`$echo $CC_quoted` "*) ;;
-      # Blanks at the start of $base_compile will cause this to fail
+      # Blanks at the start_mac of $base_compile will cause this to fail
       # if we don't check for them as well.
       *)
 	for z in $available_tags; do
