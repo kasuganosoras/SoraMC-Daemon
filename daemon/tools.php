@@ -96,7 +96,7 @@ class Tools {
      */
     public function saveSystemConfig($cn, $sm, $jc) {
         $ConfigContent = $this->GetConfigContent();
-        $Replacement=array('"CoreName" => "'.$this->config->CoreName.'"','"JavaCommand" => "'.$this->config->JavaCommand.'"','"ServerMemories" => '.$this->config->ServerMemories.'');
+        $Replacement=array('"CoreName" => "'.$this->config["CoreName"].'"','"JavaCommand" => "'.$this->config["JavaCommand"].'"','"ServerMemories" => '.$this->config["ServerMemories"].'');
         $Replace=array('"CoreName" => "'.$cn.'"','"JavaCommand" => "'.$jc.'"','"ServerMemories" => '.$sm.'');
         $ConfigContent = str_replace($Replacement,$Replace,$ConfigContent);
         file_put_contents("../config/config.php", $ConfigContent);
