@@ -219,10 +219,11 @@ while(true) {
 					}
 				}
 			}
+			usleep(200);
         }
         @socket_close($connect); // 结束连接
     }
-    usleep(1000);
+    usleep(200);
 }
 
 class Minecraft extends Thread {
@@ -269,6 +270,7 @@ class Minecraft extends Thread {
 						@unlink("./status.dat");
 						return;
 					}
+					usleep(200);
 				}
 			}
         }
@@ -313,6 +315,7 @@ class HttpServer extends Thread {
 			$process = proc_open("java -Xmx" . $this->mrys . "M -Xms" . $this->mrys . "M -jar SoraMC.jar " . $this->hprt . " " . $this->args, $descriptorspec, $pipes);
 			while (true) {
 				// Not thing to do
+                usleep(200);
 			}
 			$return_value = proc_close($process);
 			$tools->println("Httpd return: $return_value");
@@ -329,9 +332,10 @@ class reStart extends Thread {
 		$tools = new Tools();
         while(file_exists("status.dat")) {
 			// Wait For Stopped.
+            usleep(200);
 		}
 		@file_put_contents("status.dat", "");
-		$Minecraft = new Minecraft("start_mac");
+		$Minecraft = new Minecraft("start");
 		$Minecraft->start();
 		return;
     }
