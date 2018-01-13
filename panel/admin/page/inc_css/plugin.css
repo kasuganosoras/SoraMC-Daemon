@@ -1,0 +1,24 @@
+﻿.serverbtn{
+			width:128px;
+			height:48px;
+			border:0px;
+			border-radius:4px;
+			font-size:14px;
+		}
+		.list{
+			width:100%;
+			text-align:center;
+		}
+		.download{
+			width:128px;
+			height:20px;
+			color:#FFF;
+			background:rgba(0,173,255,0.7);
+			border:0px;
+			border-radius:4px;
+		}
+		.download:hover{
+			background:rgba(0,173,255,1);
+			cursor:pointer;
+			color:#FFF;
+		}

@@ -1,0 +1,80 @@
+﻿@font-face { 
+font-family: Light;
+src: url(../../fonts/SourceCodePro-Light.ttf);
+} 
+.serverbtn{
+			width:128px;
+			height:26px;
+			border:0px;
+			border-radius:4px;
+			font-size:14px;
+		}
+		#logs{
+			width:98%;
+			height:480px;
+			border:1px solid #d6d6d6;
+			border-radius:4px;
+			margin:auto;
+			overflow:auto;
+			font-family:Light;
+		}
+		#command{
+			width:88%;
+			height:32px;
+			margin-top:15px;
+			margin-left:1%;
+			border:1px solid #d6d6d6;
+			border-radius:4px 0px 0px 4px;
+			font-size:16px;
+		}
+		#runcmd{
+			width:10%;
+			height:32px;
+			margin-top:15px;
+			border:0px;
+			border-radius:0px 4px 4px 0px;
+			position: relative;
+			left: -4px;
+			background:rgba(0,173,255,0.7);
+			cursor:pointer;
+			color:#FFF;
+			top: -1px;
+		}
+		#runcmd:hover{
+			background:rgba(0,173,255,1);
+		}
+		.toolbox{
+			width:98%;
+			height:48px;
+			border:1px solid #d6d6d6;
+			border-radius:4px;
+			margin:auto;
+		}
+		#type{
+			width:256px;
+			height:24px;
+			border:1px solid rgba(0,0,0,0.3);
+			border-radius:4px;
+			margin-left:10px;
+			margin-top:10px; 
+		}
+		.playername{
+			width:256px;
+			height:24px;
+			border:1px solid rgba(0,0,0,0.3);
+			border-radius:4px;
+			margin-left:5px;
+		}
+		.doit{
+			width:64px;
+			height:24px;
+			border:0px;
+			border-radius:4px;
+			background:rgba(0,173,255,0.7);
+			cursor:pointer;
+			color:#FFF;
+			margin-left:5px;
+		}
+		.doit:hover{
+			background:rgba(0,173,255,1);
+		}

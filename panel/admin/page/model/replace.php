@@ -1,0 +1,65 @@
+﻿<?php
+class Replace{
+	public $input;
+	function console($input){
+		return 
+		str_replace("Query running on","服务器信息交互接口运行于：",
+		str_replace("RCON running on","网页控制端连接运行于：",
+		str_replace("Preparing spawn area:","正在生成区块：",
+		str_replace("Preparing start region for level","正在生成地图区块于",
+		str_replace("World Settings For","服务器地图设置于",
+		str_replace("Preparing level","正在加载地图",
+		str_replace("**** Beginning UUID conversion, this may take A LONG time ****","****正在转换UUID，这可能需要一段时间****",
+		str_replace("To change this, set \"online-mode\" to \"true\" in the server.properties file.","如果需要启用正版验证模式，请点击左侧 管理器 > 服务器设置 开启正版验证",
+		str_replace("While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.","这将会降低服务器安全性，任何人可以以任意用户名登陆游戏。如果您是正版玩家，建议您打开正版验证模式。",
+		str_replace("The server will make no attempt to authenticate usernames. Beware.","请注意，离线模式服务器不会尝试验证玩家用户名！",
+		str_replace("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!","****服务器当前运行于离线/盗版模式！",
+		str_replace("Starting Minecraft server on","Minecraft服务器运行于端口：",
+		str_replace("Debug logging is","调试模式日志记录状态：",
+		str_replace("creating it.","系统已经自动创建该文件",
+		str_replace("Unable to find file","无法找到文件",
+		str_replace("This server is running CraftBukkit version","当前运行的服务端核心基于 CraftBukkit，版本",
+		str_replace("Failed to load eula.txt","无法加载最终用户许可协议(EULA)设置",
+		str_replace("This crash report has been saved to:","服务器错误报告已经保存到：",
+		str_replace("java.net.UnknownHostException:","错误的服务器IP地址：",
+		str_replace("ERROR]","<span style='color:#FF0000;'>错误</span>]",
+		str_replace("Default game type:","默认游戏模式为：",
+		str_replace("! For help, type \"help\" or \"?\"","，需要更多帮助，请输入 \"help\" 或 \"?\"</span>",
+		str_replace(": Done",": <span style='color:rgba(0,167,36,1);'>启动完成！耗时",
+		str_replace("Rcon","控制台",
+		str_replace("Rcon connection from","来自网页控制台的连接",
+		str_replace("Saving chunks for level","正在保存世界区块",
+		str_replace("Rcon]","控制台]",
+		str_replace("Saving worlds","正在保存世界",
+		str_replace("Saving players","正在保存玩家数据",
+		str_replace("Loading libraries, please wait...","正在加载支持库文件，请稍后...",
+		str_replace("Stopping server","正在关闭服务器",
+		str_replace("Loading properties","正在加载配置文件",
+		str_replace("Starting minecraft server version","正在启动 Minecraft 服务器，支持游戏版本：",
+		str_replace("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.","你必须要同意EULA协议才能启动服务器，编辑eula.txt，并把eula=false改为eula=true",
+		str_replace("WARN]","<span style='color:#FF9900;'>警告</span>]",
+		str_replace("INFO]","信息]",
+		str_replace("\n","<br>",
+		substr(iconv("GB2312","UTF-8//IGNORE",$input),-8192,8192))))))))))))))))))))))))))))))))))))));
+	}
+	function chat($input){
+		return 
+		str_replace("! For help, type \"help\" or \"?\"","，需要更多帮助，请输入 \"help\" 或 \"?\"</span>",
+		str_replace(": Done",": <span style='color:rgba(0,167,36,1);'>启动完成！耗时",
+		str_replace("Rcon","控制台",
+		str_replace("Rcon connection from","来自网页控制台的连接",
+		str_replace("Saving chunks for level","正在保存世界区块",
+		str_replace("Rcon]","控制台]",
+		str_replace("Saving worlds","正在保存世界",
+		str_replace("Saving players","正在保存玩家数据",
+		str_replace("Loading libraries, please wait...","正在加载支持库文件，请稍后...",
+		str_replace("Stopping server","正在关闭服务器",
+		str_replace("Loading properties","正在加载配置文件",
+		str_replace("Starting minecraft server version","正在启动 Minecraft 服务器，支持游戏版本：",
+		str_replace("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.","你必须要同意EULA协议才能启动服务器，编辑eula.txt，并把eula=false改为eula=true",
+		str_replace("WARN]","<span style='color:#FF0000;'>错误</span>]",
+		str_replace("INFO]","信息]",
+		str_replace("\n","<br>",
+		substr(iconv("GB2312","UTF-8//IGNORE",$input),-8192,8192)))))))))))))))));
+	}
+}
