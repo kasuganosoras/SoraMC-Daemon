@@ -1,4 +1,7 @@
-# SoraMC-Daemon
+# SoraMCReloaded-Daemon
+## 注意! 本项目的panel(./panel/)
+## 已经被移动到https://github.com/dhdjSYS/SoraMCReloaded-Panel
+## 并且同步reload
 This is a Minecraft server panel Daemon<br>
 SoraMC 服务器面板对应的 Daemon 守护进程<br>
 通讯方式：TCP/IP Socket<br>
