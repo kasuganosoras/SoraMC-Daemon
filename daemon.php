@@ -14,7 +14,10 @@ error_reporting(E_ALL);
 // 引入加密类和工具类，载入配置文件
 include("AES.php");
 include("tools.php");
-include("../config/config.php");
+if(!file_exists("config.php")) {
+	(new Tools())->defaultSystemConfig();
+}
+include("config.php");
 // 读入配置文件
 $keys = $aesenkey;
 $port = $bindport;

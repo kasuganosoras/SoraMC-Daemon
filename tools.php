@@ -105,7 +105,23 @@ class Tools {
 		$config = str_replace("{corename}", $corename, $config);
 		$config = str_replace("{jvmmaxmr}", $jvmmaxmr, $config);
 		$config = str_replace("{javapath}", $javapath, $config);
-		file_put_contents("../config/config.php", $config);
+		@file_put_contents("../config/config.php", $config);
+	}
+	
+	public function defaultSystemConfig() {
+		$config = $this::configTemplate();
+		$config = str_replace("{password}", "KasuganoSora", $config);
+		$config = str_replace("{bindport}", 26817, $config);
+		$config = str_replace("{bindhost}", "localhost", $config);
+		$config = str_replace("{daemonid}", 1, $config);
+		$config = str_replace("{aesenkey}", "EncryptKey0Ex!sF?xwA09xf52", $config);
+		$config = str_replace("{contoken}", "AaBbCcDdEeFfGgHhIiJjKkLlMn", $config);
+		$config = str_replace("{httpport}", 21567, $config);
+		$config = str_replace("{httpmrys}", 512, $config);
+		$config = str_replace("{corename}", "spigot-1.12.2-R0.1-SNAPSHOT-b1497.jar", $config);
+		$config = str_replace("{jvmmaxmr}", 1024, $config);
+		$config = str_replace("{javapath}", "C:\Program Files\Java\jre1.8.0_151\bin\java.exe", $config);
+		@file_put_contents("./config.php", $config);
 	}
 	
 	public function configTemplate() {
