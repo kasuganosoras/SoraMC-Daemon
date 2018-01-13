@@ -221,6 +221,7 @@ while(true) {
         }
         @socket_close($connect); // 结束连接
     }
+    usleep(100);
 }
 
 class Minecraft extends Thread {
