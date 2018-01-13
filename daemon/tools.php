@@ -61,15 +61,14 @@ class Tools {
 	public function is_json($string){
 		if(json_decode($string) == null) {
 			return false;
-		} else {
-			return true;
 		}
+		return true;
 	}
 	
-	public function getSoraMC($info) {
+	public function getSoraMC($info = "version") {
 		switch($info) {
 			case "version":
-				return "Ver.10.0.31011";
+				return "Ver.1.0.0_dhdjReloaded";
 				break;
 			case "encrypt":
 				return "AES_256_CFB";

@@ -40,7 +40,7 @@ if(@socket_bind($socket, $host, $port) === false) {
 	exit;
 }
 @socket_listen($socket, 5);
-$tools->println("SoraMCReloaded Version 1.0.0.0");
+$tools->println("SoraMCReloaded Version ".$tools->getSoraMC("version"));
 $tools->println("Daemon Running on port: " . $port);
 sleep(1);
 $tools->println("Starting httpd service ...");
