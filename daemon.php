@@ -1,37 +1,38 @@
 <?php
-// DEBUG ÓÃ£¬ÕıÊ½ÉÏÏßÊ±É¾³ı
+// DEBUG ç”¨ï¼Œæ­£å¼ä¸Šçº¿æ—¶åˆ é™¤
 error_reporting(E_ALL);
 /**
  *
- *	SoraMC Server Daemon
+ *	SoraMC Server Daemon Reloaded
  *
- *	±¾³ÌĞòÊ¹ÓÃ GNU GPL v3 Ğ­Òé¿ªÔ´
+ *	æœ¬ç¨‹åºä½¿ç”¨ GNU GPL v3 åè®®å¼€æº
  *
- *	Ê¹ÓÃÊ±Çë×ñÊØĞ­Òé ( LICENSE )
- *
+ *	ä½¿ç”¨æ—¶è¯·éµå®ˆåè®® ( LICENSE )
+ *  dhdj reloaded
  **/
- 
-// ÒıÈë¼ÓÃÜÀàºÍ¹¤¾ßÀà£¬ÔØÈëÅäÖÃÎÄ¼ş
+
+// å¼•å…¥åŠ å¯†ç±»å’Œå·¥å…·ç±»ï¼Œè½½å…¥é…ç½®æ–‡ä»¶
 include("AES.php");
 include("tools.php");
 include("../config/config.php");
-// ¶ÁÈëÅäÖÃÎÄ¼ş
+// è¯»å…¥é…ç½®æ–‡ä»¶
 $keys = $aesenkey;
 $port = $bindport;
 $host = $bindhost;
 $auth = $contoken;
 $mrys = $httpmrys;
 $hprt = $httpport;
-// Tools ¹¤¾ßÀà
+// Tools å·¥å…·ç±»
 $tools = new Tools();
-echo "    _  __                                         ____                  \n";
-echo "   | |/ /__ _ ___ _   _  __ _  __ _ _ __   ___   / ___|  ___  _ __ __ _ \n";
-echo "   | ' // _` / __| | | |/ _` |/ _` | '_ \ / _ \  \___ \ / _ \| '__/ _` |\n";
-echo "   | . \ (_| \__ \ |_| | (_| | (_| | | | | (_) |  ___) | (_) | | | (_| |\n";
-echo "   |_|\_\__,_|___/\__,_|\__, |\__,_|_| |_|\___/  |____/ \___/|_|  \__,_|\n";
-echo "                        |___/                                           \n";
-echo "                                                  Minecraft Server Panel\n";
-// ´´½¨ Socket
+echo '    _  __                                         ____                  \n';
+echo '   | |/ /__ _ ___ _   _  __ _  __ _ _ __   ___   / ___|  ___  _ __ __ _ \n';
+echo '   | " // _` / __| | | |/ _` |/ _` | "_ \ / _ \  \___ \ / _ \| "__/ _` |\n';
+echo '   | . \ (_| \__ \ |_| | (_| | (_| | | | | (_) |  ___) | (_) | | | (_| |\n';
+echo '   |_|\_\__,_|___/\__,_|\__, |\__,_|_| |_|\___/  |____/ \___/|_|  \__,_|\n';
+echo '                        |___/                                           \n';
+echo '                                                  Minecraft Server Panel\n';
+echo '                                          Reloaded by dhdj[William Wang]\n';
+// åˆ›å»º Socket
 $socket = @socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 if(@socket_bind($socket, $host, $port) === false) {
 	$tools->println("**** FAILED TO BIND TO PORT!", false, 2);
@@ -55,7 +56,7 @@ usleep(500);
 $tools->println("Starting log service ...");
 $logthread = new logs("");
 $logthread->start();
-// ´´½¨ Minecraft ·şÎñ¶ËÎÄ¼ş¼Ğ
+// åˆ›å»º Minecraft æœåŠ¡ç«¯æ–‡ä»¶å¤¹
 if(!file_exists("./Minecraft/")) {
 	$tools->println("Minecraft server folder not found, try to create it ...");
 	if(@mkdir("./Minecraft/", 0777)) {
@@ -65,33 +66,33 @@ if(!file_exists("./Minecraft/")) {
 	}
 }
 while(true) {
-	// ½ÓÊÜÀ´×Ô¿Í»§¶ËµÄÁ¬½Ó
+	// æ¥å—æ¥è‡ªå®¢æˆ·ç«¯çš„è¿æ¥
     $connect = socket_accept($socket);
     if($connect !== false){
-		// ¶ÁÈë¿Í»§¶Ë·¢ËÍµÄÊı¾İ£¬»º³åÇøÉèÖÃ³É 8192 Ò»°ãÊÇ×ã¹»µÄÁË
+		// è¯»å…¥å®¢æˆ·ç«¯å‘é€çš„æ•°æ®ï¼Œç¼“å†²åŒºè®¾ç½®æˆ 8192 ä¸€èˆ¬æ˜¯è¶³å¤Ÿçš„äº†
         while($read = @socket_read($connect, 8192)){
-			// µÃµ½¿Í»§¶ËĞÅÏ¢
+			// å¾—åˆ°å®¢æˆ·ç«¯ä¿¡æ¯
 			socket_getpeername($connect, $clientip, $clientport);
-			// ´´½¨ AES ¶ÔÏó
+			// åˆ›å»º AES å¯¹è±¡
 			$aes = new AES($bit = 256, $key = md5($keys), $iv = md5($keys), $mode = 'cfb');
 			/**
 			 *
-			 *	ÅĞ¶Ï¿Í»§¶Ë·¢ËÍ¹ıÀ´µÄÄÚÈİ£¬Èç¹û·ûºÏĞ­Òé±àÂë¹æ·¶¼´ Base64£¬Ôò½ÓÊÜÁ¬½Ó
+			 *	åˆ¤æ–­å®¢æˆ·ç«¯å‘é€è¿‡æ¥çš„å†…å®¹ï¼Œå¦‚æœç¬¦åˆåè®®ç¼–ç è§„èŒƒå³ Base64ï¼Œåˆ™æ¥å—è¿æ¥
 			 *
 			 **/
 			if(preg_match("/^[A-Za-z0-9\=\/\+]+$/", $read)) {
 				$tools->println("New request from socket: " . $clientip . ":" . $clientport); // DEBUG
-				$decrypt = $aes->decrypt($read); // ½âÃÜÊı¾İ
+				$decrypt = $aes->decrypt($read); // è§£å¯†æ•°æ®
 				$action = json_decode($decrypt, true);
 				if($action["action"] == "login") {
 					if($action["key"] == $keys) {
 						$res = $tools->status(200, $auth);
 						$ret = $aes->encrypt($res);
-						socket_write($connect, $ret, strlen($ret)); // ÈÏÖ¤³É¹¦£¬·µ»Ø token
+						socket_write($connect, $ret, strlen($ret)); // è®¤è¯æˆåŠŸï¼Œè¿”å› token
 					} else {
 						$res = $tools->status(403, 'Auth Failed');
 						$ret = $aes->encrypt($res);
-						socket_write($connect, $ret, strlen($ret)); // ÈÏÖ¤Ê§°Ü£¬·µ»Ø Auth Failed
+						socket_write($connect, $ret, strlen($ret)); // è®¤è¯å¤±è´¥ï¼Œè¿”å› Auth Failed
 					}
 				} else {
 					if($action["token"] == $keys) {
@@ -100,15 +101,15 @@ while(true) {
 								if(file_exists("status.dat")) {
 									$res = $tools->status(502, 'Server Is Running');
 									$ret = $aes->encrypt($res);
-									@socket_write($connect, $ret, strlen($ret)); // ·şÎñÆ÷ÒÑ¾­ÔÚÔËĞĞ
+									@socket_write($connect, $ret, strlen($ret)); // æœåŠ¡å™¨å·²ç»åœ¨è¿è¡Œ
 									break;
 								} else {
 									@file_put_contents("status.dat", "");
-									$thread = new Minecraft("start"); //Æô¶¯ Minecraft ·şÎñ¶Ë
+									$thread = new Minecraft("start"); //å¯åŠ¨ Minecraft æœåŠ¡ç«¯
 									$thread->start();
 									$res = $tools->status(200, 'Successful Start Server');
 									$ret = $aes->encrypt($res);
-									@socket_write($connect, $ret, strlen($ret)); // ³É¹¦Æô¶¯·şÎñÆ÷
+									@socket_write($connect, $ret, strlen($ret)); // æˆåŠŸå¯åŠ¨æœåŠ¡å™¨
 									break;
 								}
 							case "stop":
@@ -116,12 +117,12 @@ while(true) {
 									@file_put_contents("command.dat", "stop");
 									$res = $tools->status(200, 'Successful Stop Server');
 									$ret = $aes->encrypt($res);
-									@socket_write($connect, $ret, strlen($ret)); // ³É¹¦¹Ø±Õ·şÎñ¶Ë
+									@socket_write($connect, $ret, strlen($ret)); // æˆåŠŸå…³é—­æœåŠ¡ç«¯
 									break;
 								} else {
 									$res = $tools->status(502, 'Server Is Stopped');
 									$ret = $aes->encrypt($res);
-									@socket_write($connect, $ret, strlen($ret)); // ·şÎñÆ÷ÒÑ¾­Í£Ö¹ÁË
+									@socket_write($connect, $ret, strlen($ret)); // æœåŠ¡å™¨å·²ç»åœæ­¢äº†
 									break;
 								}
 							case "restart":
@@ -131,70 +132,70 @@ while(true) {
 									$restart->start();
 									$res = $tools->status(200, 'Successful reStart Server');
 									$ret = $aes->encrypt($res);
-									socket_write($connect, $ret, strlen($ret)); // ³É¹¦ÖØÆô·şÎñ¶Ë
+									socket_write($connect, $ret, strlen($ret)); // æˆåŠŸé‡å¯æœåŠ¡ç«¯
 									break;
 								} else {
 									$res = $tools->status(502, 'Server Is Stopped');
 									$ret = $aes->encrypt($res);
-									@socket_write($connect, $ret, strlen($ret)); // ·şÎñ¶ËÎ´ÔËĞĞ
+									@socket_write($connect, $ret, strlen($ret)); // æœåŠ¡ç«¯æœªè¿è¡Œ
 									break;
 								}
 							case "status":
 								if(file_exists("status.dat")) {
 									$res = $tools->status(200, 'Server Online');
 									$ret = $aes->encrypt($res);
-									socket_write($connect, $ret, strlen($ret)); // ·şÎñÆ÷ÔÚÏß
+									socket_write($connect, $ret, strlen($ret)); // æœåŠ¡å™¨åœ¨çº¿
 									break;
 								} else {
 									$res = $tools->status(502, 'Server Offline');
 									$ret = $aes->encrypt($res);
-									@socket_write($connect, $ret, strlen($ret)); // ·şÎñÆ÷ÀëÏß
+									@socket_write($connect, $ret, strlen($ret)); // æœåŠ¡å™¨ç¦»çº¿
 									break;
 								}
 							case "daemonversion":
 								$res = $tools->status(403, $tools->getSoraMC("version"));
 								$ret = $aes->encrypt($res);
-								socket_write($connect, $ret, strlen($ret)); // Daemon °æ±¾
+								socket_write($connect, $ret, strlen($ret)); // Daemon ç‰ˆæœ¬
 								break;
 							case "daemonencrypt":
 								$res = $tools->status(403, $tools->getSoraMC("encrypt"));
 								$ret = $aes->encrypt($res);
-								socket_write($connect, $ret, strlen($ret)); // Daemon ¼ÓÃÜ·½Ê½
+								socket_write($connect, $ret, strlen($ret)); // Daemon åŠ å¯†æ–¹å¼
 								break;
 							case "getserverconfig":
 								$res = $tools->status(403, $tools->getSoraMC("config"));
 								$ret = $aes->encrypt($res);
-								socket_write($connect, $ret, strlen($ret)); // »ñÈ¡·şÎñ¶ËÉèÖÃ
+								socket_write($connect, $ret, strlen($ret)); // è·å–æœåŠ¡ç«¯è®¾ç½®
 								break;
 							case "getsystemconfig":
 								$res = $tools->status(403, $tools->getSystemConfig());
 								$ret = $aes->encrypt($res);
-								socket_write($connect, $ret, strlen($ret)); // »ñÈ¡ Daemon ÉèÖÃ
+								socket_write($connect, $ret, strlen($ret)); // è·å– Daemon è®¾ç½®
 								break;
 							case "saveconfig":
 								@file_put_contents("./Minecraft/server.properties", base64_decode($action["args"]));
 								$res = $tools->status(403, 'Successful save config');
 								$ret = $aes->encrypt($res);
-								socket_write($connect, $ret, strlen($ret)); // ±£´æ·şÎñ¶ËÉèÖÃ
+								socket_write($connect, $ret, strlen($ret)); // ä¿å­˜æœåŠ¡ç«¯è®¾ç½®
 								break;
 							case "savesystemconfig":
 								$sconf = json_decode(base64_decode($action["args"]), true);
 								$tools->saveSystemConfig($sconf["corename"], $sconf["jvmmaxmr"], $sconf["javapath"]);
 								$res = $tools->status(403, 'Successful save config');
 								$ret = $aes->encrypt($res);
-								socket_write($connect, $ret, strlen($ret)); // ±£´æ Daemon ÉèÖÃ
+								socket_write($connect, $ret, strlen($ret)); // ä¿å­˜ Daemon è®¾ç½®
 								break;
 							case "sendcommand":
 								if(file_exists("status.dat")) {
 									@file_put_contents("command.dat", iconv("UTF-8", "GB2312", base64_decode($action["args"])));
 									$res = $tools->status(200, 'Successful Run Command');
 									$ret = $aes->encrypt($res);
-									@socket_write($connect, $ret, strlen($ret)); // ³É¹¦·¢ËÍÃüÁî
+									@socket_write($connect, $ret, strlen($ret)); // æˆåŠŸå‘é€å‘½ä»¤
 									break;
 								} else {
 									$res = $tools->status(502, 'Server Offline');
 									$ret = $aes->encrypt($res);
-									@socket_write($connect, $ret, strlen($ret)); // ·şÎñ¶Ë²»ÔÚÏß
+									@socket_write($connect, $ret, strlen($ret)); // æœåŠ¡ç«¯ä¸åœ¨çº¿
 									break;
 								}
 							case "sendmessage":
@@ -203,28 +204,28 @@ while(true) {
 									@file_put_contents("./Minecraft/playerchat.log", "[" . date("H:i:s") . "]<Server> " . iconv("UTF-8", "GB2312", base64_decode($action["args"])) . "\n", FILE_APPEND);
 									$res = $tools->status(200, 'Successful Send Message');
 									$ret = $aes->encrypt($res);
-									socket_write($connect, $ret, strlen($ret)); // ³É¹¦·¢ËÍÏûÏ¢
+									socket_write($connect, $ret, strlen($ret)); // æˆåŠŸå‘é€æ¶ˆæ¯
 									break;
 								} else {
 									$res = $tools->status(502, 'Server Offline');
 									$ret = $aes->encrypt($res);
-									socket_write($connect, $ret, strlen($ret)); // ·şÎñ¶Ë²»ÔÚÏß
+									socket_write($connect, $ret, strlen($ret)); // æœåŠ¡ç«¯ä¸åœ¨çº¿
 									break;
 								}
 							default:
 								$res = $tools->status(404, 'Action Not Found');
 								$ret = $aes->encrypt($res);
-								socket_write($connect, $ret, strlen($ret)); // ²Ù×÷²»´æÔÚ
+								socket_write($connect, $ret, strlen($ret)); // æ“ä½œä¸å­˜åœ¨
 						}
 					} else {
 						$res = $tools->status(403, 'Token Forbidden');
 						$ret = $aes->encrypt($res);
-						socket_write($connect, $ret, strlen($ret)); // Token ²»ÕıÈ·
+						socket_write($connect, $ret, strlen($ret)); // Token ä¸æ­£ç¡®
 					}
 				}
 			}
         }
-        @socket_close($connect); // ½áÊøÁ¬½Ó
+        @socket_close($connect); // ç»“æŸè¿æ¥
     }
 }
 
