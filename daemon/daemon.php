@@ -102,7 +102,6 @@ while(true) {
 									$res = $tools->status(502, 'Server Is Running');
 									$ret = $aes->encrypt($res);
 									@socket_write($connect, $ret, strlen($ret)); // 服务器已经在运行
-									break;
 								} else {
 									@file_put_contents("status.dat", "");
 									$thread = new Minecraft("start_mac"); //启动 Minecraft 服务端
@@ -110,21 +109,20 @@ while(true) {
 									$res = $tools->status(200, 'Successful Start Server');
 									$ret = $aes->encrypt($res);
 									@socket_write($connect, $ret, strlen($ret)); // 成功启动服务器
-									break;
 								}
+								break;
 							case "stop":
 								if(file_exists("status.dat")) {
 									@file_put_contents("command.dat", "stop");
 									$res = $tools->status(200, 'Successful Stop Server');
 									$ret = $aes->encrypt($res);
 									@socket_write($connect, $ret, strlen($ret)); // 成功关闭服务端
-									break;
 								} else {
 									$res = $tools->status(502, 'Server Is Stopped');
 									$ret = $aes->encrypt($res);
 									@socket_write($connect, $ret, strlen($ret)); // 服务器已经停止了
-									break;
 								}
+								break;
 							case "restart":
 								if(file_exists("status.dat")) {
 									@file_put_contents("command.dat", "stop");
@@ -133,25 +131,23 @@ while(true) {
 									$res = $tools->status(200, 'Successful reStart Server');
 									$ret = $aes->encrypt($res);
 									socket_write($connect, $ret, strlen($ret)); // 成功重启服务端
-									break;
 								} else {
 									$res = $tools->status(502, 'Server Is Stopped');
 									$ret = $aes->encrypt($res);
 									@socket_write($connect, $ret, strlen($ret)); // 服务端未运行
-									break;
 								}
+								break;
 							case "status":
 								if(file_exists("status.dat")) {
 									$res = $tools->status(200, 'Server Online');
 									$ret = $aes->encrypt($res);
 									socket_write($connect, $ret, strlen($ret)); // 服务器在线
-									break;
 								} else {
 									$res = $tools->status(502, 'Server Offline');
 									$ret = $aes->encrypt($res);
 									@socket_write($connect, $ret, strlen($ret)); // 服务器离线
-									break;
 								}
+								break;
 							case "daemonversion":
 								$res = $tools->status(403, $tools->getSoraMC("version"));
 								$ret = $aes->encrypt($res);
@@ -191,13 +187,12 @@ while(true) {
 									$res = $tools->status(200, 'Successful Run Command');
 									$ret = $aes->encrypt($res);
 									@socket_write($connect, $ret, strlen($ret)); // 成功发送命令
-									break;
 								} else {
 									$res = $tools->status(502, 'Server Offline');
 									$ret = $aes->encrypt($res);
 									@socket_write($connect, $ret, strlen($ret)); // 服务端不在线
-									break;
 								}
+								break;
 							case "sendmessage":
 								if(file_exists("status.dat")) {
 									@file_put_contents("command.dat", "say " . iconv("UTF-8", "GB2312", base64_decode($action["args"])));
@@ -205,13 +200,12 @@ while(true) {
 									$res = $tools->status(200, 'Successful Send Message');
 									$ret = $aes->encrypt($res);
 									socket_write($connect, $ret, strlen($ret)); // 成功发送消息
-									break;
 								} else {
 									$res = $tools->status(502, 'Server Offline');
 									$ret = $aes->encrypt($res);
 									socket_write($connect, $ret, strlen($ret)); // 服务端不在线
-									break;
 								}
+								break;
 							default:
 								$res = $tools->status(404, 'Action Not Found');
 								$ret = $aes->encrypt($res);
