@@ -99,14 +99,14 @@ while(true) {
 				} else {
 					if($action["token"] == $config->AESToken) {
 						switch($action["action"]) {
-							case "start_mac":
+							case "start":
 								if(file_exists("status.dat")) {
 									$res = $tools->status(502, 'Server Is Running');
 									$ret = $aes->encrypt($res);
 									@socket_write($connect, $ret, strlen($ret)); // 服务器已经在运行
 								} else {
 									@file_put_contents("status.dat", "");
-									$thread = new Minecraft("start_mac"); //启动 Minecraft 服务端
+									$thread = new Minecraft("start"); //启动 Minecraft 服务端
 									$thread->start();
 									$res = $tools->status(200, 'Successful Start Server');
 									$ret = $aes->encrypt($res);
@@ -129,7 +129,7 @@ while(true) {
 							case "restart":
 								if(file_exists("status.dat")) {
 									@file_put_contents("command.dat", "stop");
-									$restart = new reStart("start_mac");
+									$restart = new reStart("start");
 									$restart->start();
 									$res = $tools->status(200, 'Successful reStart Server');
 									$ret = $aes->encrypt($res);
