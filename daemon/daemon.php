@@ -113,7 +113,8 @@ while(true) {
 								break;
 							case "stop":
 								if(file_exists("status.dat")) {
-									@file_put_contents("command.dat", "stop");
+									@file_put_contents(/** @lang text */
+                                        "command.dat", "stop");
 									$res = $tools->status(200, 'Successful Stop Server');
 									$ret = $aes->encrypt($res);
 									@socket_write($connect, $ret, strlen($ret)); // 成功关闭服务端
@@ -221,7 +222,7 @@ while(true) {
         }
         @socket_close($connect); // 结束连接
     }
-    usleep(100);
+    usleep(1000);
 }
 
 class Minecraft extends Thread {
