@@ -2,6 +2,10 @@
 date_default_timezone_set(/** @lang text */
     "Asia/Shanghai");
 class Tools {
+    public function __construct(){
+        include("../config/config.php");
+        $this->config = $config;
+    }
 	public function status($code, $text) {
 		$array = Array(
 			'status' => $code,
@@ -82,19 +86,26 @@ class Tools {
 	
 	public function getSystemConfig() {
 		include("../config/config.php");
-		return json_encode(Array(
-			'corename' => $corename,
-			'jvmmaxmr' => $jvmmaxmr,
-			'javapath' => $javapath
-		));
+		return json_encode($this->config);
 	}
-	
-	public function saveSystemConfig($cn, $jr, $jp) {
-		include("../config/config.php");
-		$corename = $cn;
-		$jvmmaxmr = $jr;
-		$javapath = $jp;
-		$config = $this::configTemplate();
+
+    /**
+     * @param $cn
+     * @param $jr
+     * @param $jp
+     */
+    public function saveSystemConfig($cn, $sm, $jc) {
+        $ConfigContent = $this->GetConfigContent();
+        $Replacement=array('"CoreName" => "'.$this->config->CoreName.'"','"JavaCommand" => "'.$this->config->JavaCommand.'"','"ServerMemories" => '.$this->config->ServerMemories.'');
+        $Replace=array('"CoreName" => "'.$cn.'"','"JavaCommand" => "'.$jc.'"','"ServerMemories" => '.$sm.'');
+        $ConfigContent = str_replace($Replacement,$Replace,$ConfigContent);
+        file_put_contents("../config/config.php", $ConfigContent);
+        if(file_get_contents("../config/config.php") == $ConfigContent){
+            return true;
+        }
+        return false;
+        /* @Deprecated
+		$config = $this->configTemplate();
 		$config = str_replace("{password}", $password, $config);
 		$config = str_replace("{bindport}", $bindport, $config);
 		$config = str_replace("{bindhost}", $bindhost, $config);
@@ -106,21 +117,28 @@ class Tools {
 		$config = str_replace("{corename}", $corename, $config);
 		$config = str_replace("{jvmmaxmr}", $jvmmaxmr, $config);
 		$config = str_replace("{javapath}", $javapath, $config);
-		file_put_contents("../config/config.php", $config);
+        */
 	}
-	
-	public function configTemplate() {
-		return '<?php
-$password = "{password}";
-$bindport = {bindport};
-$bindhost = "{bindhost}";
-$daemonid = {daemonid};
-$aesenkey = "{aesenkey}";
-$contoken = "{contoken}";
-$httpport = {httpport};
-$httpmrys = {httpmrys};
-$corename = "{corename}";
-$jvmmaxmr = {jvmmaxmr};
-$javapath = "{javapath}";';
+	public function GetConfigContent() {
+        return file_get_contents("../config/config.php");
+    }
+    /* @Deprecated
+    public function configTemplate() {
+        return '<?php
+static $config = array(
+    "TPS" => 5,//Daemon处理频率[Ticks Per Second(帧每秒)][建议使用5的整数倍,否则可能需要round,无法精确]
+    "Password" => "password",//链接密码
+    "DaemonPort" => 26817,//Daemon通讯端口
+    "LogPort" => 21567,//日志服务器端口
+    "LogMemories" => 512,//日志服务器内存大小
+    "ServerMemories" => 1024,//服务器内存大小
+    "CoreName" => "server.jar",//核心名字
+    "ServerHost" => "localhost",//服务器绑定IP[建议使用localhost或127.0.0.1]
+    "DaemonID" => "1",//DaemonID
+    "AESToken" => "EncryptKey0Ex!sF?xwA09xf52",//字面意思
+    "ConToken" => "AaBbCcDdEeFfGgHhIiJjKkLlMn",//不用管就好
+    "JavaCommand" => "java"//java路径,path设置过请用java
+);';
 	}
+    */
 }

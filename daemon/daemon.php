@@ -15,13 +15,15 @@ error_reporting(E_ALL);
 include("AES.php");
 include("tools.php");
 include("../config/config.php");
-// 读入配置文件
+$config->uSleepTime=round(1000/$config->TPS);
+/* @Deprecated [被弃用的读入配置文件]
 $keys = $aesenkey;
 $port = $bindport;
 $host = $bindhost;
 $auth = $contoken;
 $mrys = $httpmrys;
 $hprt = $httpport;
+ */
 // Tools 工具类
 $tools = new Tools();
 echo '    _  __                                         ____                  \n';
@@ -34,25 +36,25 @@ echo '                                                  Minecraft Server Panel\n
 echo '                                          Reloaded by dhdj[William Wang]\n';
 // 创建 Socket
 $socket = @socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-if(@socket_bind($socket, $host, $port) === false) {
+if(@socket_bind($socket, $config->ServerHost, $config->DaemonPort) === false) {
 	$tools->println("**** FAILED TO BIND TO PORT!", false, 2);
 	$tools->println("Perhaps a server is already running on that port?", false, 2);
 	exit;
 }
 @socket_listen($socket, 5);
 $tools->println("SoraMCReloaded Version ".$tools->getSoraMC("version"));
-$tools->println("Daemon Running on port: " . $port);
+$tools->println("Daemon Running on port: " . $config->DaemonPort);
 sleep(1);
 $tools->println("Starting httpd service ...");
-$httpdthread = new HttpServer($hprt, $mrys, $auth . " sora.log >test.log");
+$httpdthread = new HttpServer($config->LogPort, $config->LogMemories, $config->ConToken . " sora.log >test.log");
 $httpdthread->start();
-usleep(500);
+usleep($config->uSleepTime);
 $tools->println("Delete old log file ...");
 @file_put_contents("command.dat", "");
 @unlink("./Minecraft/logs/latest.log");
 @unlink("./sora.log");
 @unlink("./status.dat");
-usleep(500);
+usleep($config->uSleepTime);
 $tools->println("Starting log service ...");
 $logthread = new logs("");
 $logthread->start();
@@ -74,7 +76,7 @@ while(true) {
 			// 得到客户端信息
 			socket_getpeername($connect, $clientip, $clientport);
 			// 创建 AES 对象
-			$aes = new AES($bit = 256, $key = md5($keys), $iv = md5($keys), $mode = 'cfb');
+			$aes = new AES($bit = 256, $key = md5($config->AESToken), $iv = md5($config->AESToken), $mode = 'cfb');
 			/**
 			 *
 			 *	判断客户端发送过来的内容，如果符合协议编码规范即 Base64，则接受连接
@@ -85,8 +87,8 @@ while(true) {
 				$decrypt = $aes->decrypt($read); // 解密数据
 				$action = json_decode($decrypt, true);
 				if($action["action"] == "login") {
-					if($action["key"] == $keys) {
-						$res = $tools->status(200, $auth);
+					if($action["key"] == $config->AESToken) {
+						$res = $tools->status(200, $config->ConToken);
 						$ret = $aes->encrypt($res);
 						socket_write($connect, $ret, strlen($ret)); // 认证成功，返回 token
 					} else {
@@ -95,7 +97,7 @@ while(true) {
 						socket_write($connect, $ret, strlen($ret)); // 认证失败，返回 Auth Failed
 					}
 				} else {
-					if($action["token"] == $keys) {
+					if($action["token"] == $config->AESToken) {
 						switch($action["action"]) {
 							case "start_mac":
 								if(file_exists("status.dat")) {
@@ -167,7 +169,7 @@ while(true) {
 							case "getsystemconfig":
 								$res = $tools->status(403, $tools->getSystemConfig());
 								$ret = $aes->encrypt($res);
-								socket_write($connect, $ret, strlen($ret)); // 获取 Daemon 设置
+								socket_write($connect, json_encode($ret), strlen(json_encode($ret))); // 获取 Daemon 设置
 								break;
 							case "saveconfig":
 								@file_put_contents("./Minecraft/server.properties", base64_decode($action["args"]));
@@ -177,8 +179,11 @@ while(true) {
 								break;
 							case "savesystemconfig":
 								$sconf = json_decode(base64_decode($action["args"]), true);
-								$tools->saveSystemConfig($sconf["corename"], $sconf["jvmmaxmr"], $sconf["javapath"]);
-								$res = $tools->status(403, 'Successful save config');
+								if($tools->saveSystemConfig($sconf["corename"], $sconf["jvmmaxmr"], $sconf["javapath"])){
+                                    $res = $tools->status(403, 'Successful save config');
+                                }else {
+                                    $res = $tools->status(403, 'Failed save config');
+                                }
 								$ret = $aes->encrypt($res);
 								socket_write($connect, $ret, strlen($ret)); // 保存 Daemon 设置
 								break;
@@ -219,16 +224,17 @@ while(true) {
 					}
 				}
 			}
-			usleep(200);
+			usleep($config->uSleepTime);
         }
         @socket_close($connect); // 结束连接
     }
-    usleep(200);
+    usleep($config->uSleepTime);
 }
 
 class Minecraft extends Thread {
-	public function __construct($arg){
+	public function __construct($arg,$uSleepTime){
         $this->arg = $arg;
+        $this->uSleepTime = $uSleepTime;
     }
 	
     public function run(){
@@ -270,7 +276,7 @@ class Minecraft extends Thread {
 						@unlink("./status.dat");
 						return;
 					}
-					usleep(200);
+					usleep($this->uSleepTime);
 				}
 			}
         }
@@ -324,18 +330,19 @@ class HttpServer extends Thread {
 }
 
 class reStart extends Thread {
-	public function __construct($args){
-        $this->args = $args;
+	public function __construct($args,$uSleepTime){
+	    $this->args= $args;
+        $this->uSleepTime = $uSleepTime;
     }
 	
     public function run(){
 		$tools = new Tools();
         while(file_exists("status.dat")) {
 			// Wait For Stopped.
-            usleep(200);
+            usleep($this->uSleepTime);
 		}
 		@file_put_contents("status.dat", "");
-		$Minecraft = new Minecraft("start");
+		$Minecraft = new Minecraft("start",$this->uSleepTime);
 		$Minecraft->start();
 		return;
     }
