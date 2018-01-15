@@ -124,6 +124,29 @@ class Tools {
 		@file_put_contents("./config.php", $config);
 	}
 	
+	public function file_read($file, $line = 2048) {
+		if(!file_exists($file)) {
+			return;
+		}
+		$fp = fopen($file, "r");
+		$num = $line;
+		$chunk = 4096;
+		$fs = sprintf("%u", filesize($file));
+		$max = (intval($fs) == PHP_INT_MAX) ? PHP_INT_MAX : filesize($file);
+		for ($len = 0; $len < $max; $len += $chunk) {
+			$seekSize = ($max - $len > $chunk) ? $chunk : $max - $len;
+			fseek($fp, ($len + $seekSize) * -1, SEEK_END);
+			$readData = fread($fp, $seekSize) . $readData;
+			if (substr_count($readData, "\n") >= $num + 1) {
+				preg_match("!(.*?\n){" . ($num) . "}$!", $readData, $match);
+				$data = $match[0];
+				break;
+			}
+		}
+		fclose($fp);
+		return $data;
+	}
+	
 	public function configTemplate() {
 		return '<?php
 $password = "{password}";

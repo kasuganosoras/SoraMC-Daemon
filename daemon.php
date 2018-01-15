@@ -290,7 +290,7 @@ class logs extends Thread {
 	public function run() {
 		$temps = "";
 		while(true) {
-			$logss = @file_get_contents("./Minecraft/logs/latest.log");
+			$logss = @file_read("./Minecraft/logs/latest.log");
 			if($temps !== $logss) {
 				echo str_replace($temps, "", $logss);
 				file_put_contents("sora.log", str_replace($temps, "", $logss), FILE_APPEND);
